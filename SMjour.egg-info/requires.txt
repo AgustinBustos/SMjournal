@@ -1,0 +1,10 @@
+pandas
+pyspssio
+clevercsv
+pyreadstat
+scipy
+scikit-learn
+matplotlib
+numpy
+seaborn
+plotly
