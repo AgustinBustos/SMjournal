@@ -78,8 +78,11 @@ def vif_distance(df,tounderstand,stochQ=1000):   #transform meta vif analisys to
 
 
 
-def collinearity_test(df,tounderstand=None,distance="vif"):   #full test of collinearity
-  tounderstand=tounderstand if tounderstand else df.columns[2:] 
+def collinearity_test(df1,tounderstand='not',distance="vif"):   #full test of collinearity
+  df=df1.copy()
+  if tounderstand=='not':
+    const_cols=[i for i in df.columns if ('.hol' in i.lower()) or ('.mkt' in i.lower())]
+    tounderstand=[i for i in df.columns if i not in const_cols+['Geographies','Weeks','non_lin_pred','lin_pred']]
   to_test=tounderstand
 
   display(getVIFs(tounderstand,df))

@@ -2,8 +2,11 @@ LICENSE
 README.md
 pyproject.toml
 setup.cfg
-SMjour/SMjour.py
 SMjour/__init__.py
+SMjour/collinearity.py
+SMjour/data.py
+SMjour/low_level.py
+SMjour/potentiality.py
 SMjour.egg-info/PKG-INFO
 SMjour.egg-info/SOURCES.txt
 SMjour.egg-info/dependency_links.txt
