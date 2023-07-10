@@ -41,3 +41,15 @@ def getFullCombination(boolArray,colls):
       final.append(colls[counter])
     counter+=1
   return final
+
+
+#meta reg
+def getIndexOfCol(var,allBetas):
+
+  counter=0
+  index=[]
+  for j in allBetas:
+    if var in j.keys():
+      index.append(counter)
+    counter+=1
+  return index

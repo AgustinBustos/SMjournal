@@ -125,7 +125,7 @@ def collinearity_test(df1,tounderstand='not',distance="corr"):   #full test of c
     similarity=vif_distance(df,tounderstand,stochQ=1000)
   
 
-  plt.figure(figsize=(12,5))
+  plt.figure(figsize=(12,8))
   dissimilarity = 1 - similarity
   Z = linkage(squareform(dissimilarity), 'complete')
 

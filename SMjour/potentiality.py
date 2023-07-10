@@ -11,6 +11,10 @@ from IPython.display import display,HTML
 
 def importance_test(df1,y_col,weight_col=None,control_cols='not',const_cols='not'):
   df=df1.copy()
+  if weight_col:
+    df=df.loc[df[weight_col]>0]
+
+
   if const_cols=='not':
     const_cols=[i for i in df.columns if ('.hol' in i.lower()) or ('.mkt' in i.lower())]
   if control_cols=='not':
