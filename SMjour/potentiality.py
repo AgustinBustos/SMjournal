@@ -9,13 +9,14 @@ from .low_level import getFullCombination
 from IPython.display import display,HTML
 
 
-def importance_test(df1,y_col,weight_col,control_cols='not',const_cols='not'):
+def importance_test(df1,y_col,weight_col=None,control_cols='not',const_cols='not'):
   df=df1.copy()
   if const_cols=='not':
     const_cols=[i for i in df.columns if ('.hol' in i.lower()) or ('.mkt' in i.lower())]
   if control_cols=='not':
     control_cols=[i for i in df.columns if i not in const_cols+[y_col,weight_col,'Geographies','Weeks','non_lin_pred','lin_pred']]
-  weight=df[weight_col].to_numpy()
+  #
+  weight=df[weight_col].to_numpy() if weight_col else None
 
   
   x_cols=control_cols+const_cols
@@ -60,7 +61,7 @@ def importance_test(df1,y_col,weight_col,control_cols='not',const_cols='not'):
           ],axis=1)
   pre_X=df_x.to_numpy()
 
-  rf = RandomForestRegressor(100, min_samples_leaf=10,n_jobs=-1)
+  rf = RandomForestRegressor(1000, min_samples_leaf=5,n_jobs=-1)
   rf.fit(pre_X, pre_y);
   
   linn = LinearRegression().fit(pre_X, pre_y,weight)
@@ -75,7 +76,7 @@ def importance_test(df1,y_col,weight_col,control_cols='not',const_cols='not'):
   fig=px.line(fulltotal,x='Weeks',y=[y_col,'non_lin_pred','lin_pred'])
   fig.show()
   #guardar_fig(fig,"bg overfitteado con vars de covid")
-  display(HTML('<h1>First Linnear, Second Non-Linear<h1>'))
+  display(HTML('<h1>First Linear, Second Non-Linear<h1>'))
   np.mean((df['non_lin_pred'].to_numpy()-df[y_col].to_numpy())**2)
   ress=pd.DataFrame(dict(cols=x_cols, imp=rf.feature_importances_))
   # ress.loc[ress["imp"]>0].plot('cols', 'imp', 'barh')
