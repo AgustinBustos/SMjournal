@@ -1,0 +1,2 @@
+# SMjournal
+Investigations Journal
