@@ -87,7 +87,7 @@ class Meta_Reg:
                 toHist.append({"value":allBetas[i][var],"control":"non_controled","error":allLosses[i],'contribution':allBetas[i][var]*medias[var]*100})
         tograph=pd.DataFrame(toHist)
 
-        #px.histogram(tograph,x="value",color="control",nbins=1000).show()
+        px.histogram(tograph,x="value",color="control",nbins=1000).show()
 
         metaY=np.array([allBetas[i][var] for i in getIndexOfCol(var,allBetas)])
         metaX=X_rand[getIndexOfCol(var,allBetas)]

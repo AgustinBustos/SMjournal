@@ -53,8 +53,8 @@ def vif_distance(df,tounderstand,stochQ=1000):   #transform meta vif analisys to
   duff.columns=fullTest
   duff.index=impacten
 
-  duff.values[[np.arange(duff.shape[0])]*2] = 0
-
+  # duff.values[[np.arange(duff.shape[0])]*2] = 0
+  np.fill_diagonal(duff.values, 0)
   to_test=interest
 
   to_test_index=impacten
@@ -78,7 +78,7 @@ def vif_distance(df,tounderstand,stochQ=1000):   #transform meta vif analisys to
 
 
 
-def collinearity_test(df1,tounderstand='not',distance="corr"):   #full test of collinearity
+def collinearity_test(df1,tounderstand='not',distance="vif",match=False,threshold=0.7):   #full test of collinearity, corr-abs interesting
   df=df1.copy()
   if tounderstand=='not':
     const_cols=[i for i in df.columns if ('.hol' in i.lower()) or ('.mkt' in i.lower())]
@@ -119,8 +119,11 @@ def collinearity_test(df1,tounderstand='not',distance="corr"):   #full test of c
   #correlations
   correlations=df[to_test].corr().fillna(0)
   if distance=="corr":
+    if match:
+      similarity=(correlations+1)/2
+    else:
+      similarity=abs(correlations)
     
-    similarity=abs(correlations)
   elif distance=="vif":
     similarity=vif_distance(df,tounderstand,stochQ=1000)
   
@@ -135,6 +138,19 @@ def collinearity_test(df1,tounderstand='not',distance="corr"):   #full test of c
   plt.savefig('maybe.svg', format='svg', dpi=1200)
 
   ########third
-  px.line(((df.groupby('Weeks').mean()-df.groupby('Weeks').mean().mean())/df.groupby('Weeks').mean().std()).reset_index(),x='Weeks',y=tounderstand).show()
+  try:
+    px.line(((df.groupby('Weeks').mean()-df.groupby('Weeks').mean().mean())/df.groupby('Weeks').mean().std()).reset_index(),x='Weeks',y=tounderstand).show()
+  except Exception as e:
+    print(e)
+
+  # Clusterize the data
+  
+  labels = fcluster(Z, threshold, criterion='distance')
+
+  # Show the cluster
+  clus=[]
+  for i in range(1,max(labels)+1):
+    clus.append(list(np.array(to_test)[np.where(labels==i)[0]]))
+  return clus
 
 

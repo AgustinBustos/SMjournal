@@ -1,0 +1,15 @@
+LICENSE
+README.md
+pyproject.toml
+setup.cfg
+SMjournal/__init__.py
+SMjournal/collinearity.py
+SMjournal/data.py
+SMjournal/low_level.py
+SMjournal/meta_reg.py
+SMjournal/potentiality.py
+SMjournal.egg-info/PKG-INFO
+SMjournal.egg-info/SOURCES.txt
+SMjournal.egg-info/dependency_links.txt
+SMjournal.egg-info/requires.txt
+SMjournal.egg-info/top_level.txt

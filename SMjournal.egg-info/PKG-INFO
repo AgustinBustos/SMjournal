@@ -1,0 +1,23 @@
+Metadata-Version: 2.1
+Name: SMjournal
+Version: 0.0.1
+Summary: Investigation Journal
+Home-page: https://github.com/AgustinBustos/SMjournal
+Author: Agustin Bustos Barton
+Author-email: agustinbustosbarton@gmail.com
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: pandas
+Requires-Dist: pyspssio
+Requires-Dist: clevercsv
+Requires-Dist: pyreadstat
+Requires-Dist: scipy
+Requires-Dist: scikit-learn
+Requires-Dist: matplotlib
+Requires-Dist: numpy
+Requires-Dist: seaborn
+Requires-Dist: plotly

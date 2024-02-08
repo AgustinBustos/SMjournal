@@ -3,7 +3,10 @@ import random
 import clevercsv
 import pyreadstat
 import pandas as pd
-from google.colab import drive
+try:
+ from google.colab import drive
+except:
+   print("You are not in Colab")
 from IPython.display import display
 
 def input_path(message=""):  #translate copy path of windows
@@ -12,7 +15,7 @@ def input_path(message=""):  #translate copy path of windows
   print("/content/drive/Shareddrives/"+'/'.join(raw_s.split("\\")[2:]))
   return "/content/drive/Shareddrives/"+'/'.join(raw_s.split("\\")[2:])
    
-def get_data(path=False,sheet_name=0,usecols=None):  #easy get data from MES csv   ###############################################  path y sheet_name
+def get_data(path=False,sheet_name=0,usecols=None,header=0):  #easy get data from MES csv   ###############################################  path y sheet_name
     #import drive
     drive.mount("/content/drive")
     #transform str and get doc
@@ -22,16 +25,16 @@ def get_data(path=False,sheet_name=0,usecols=None):  #easy get data from MES csv
       newpath=input_path('Input path:')
     
     if (newpath.split("/")[-1].split(".")[-1] == "xlsx") or (newpath.split("/")[-1].split(".")[-1] == "xls"):
-        df=pd.read_excel(newpath,sheet_name=sheet_name)
+        df=pd.read_excel(newpath,sheet_name=sheet_name,header=header)
     elif (newpath.split("/")[-1].split(".")[-1] == "csv"):
         df=pd.read_csv(newpath)
     elif (newpath.split("/")[-1].split(".")[-1] == "sav"):
         df=pd.read_spss(newpath,usecols=usecols)
-        try:
-           df=df.rename(columns={"WEEK": "Weeks", "MKT": "Geographies"})
+        # try:
+        #    df=df.rename(columns={"WEEK": "Weeks", "MKT": "Geographies"})
            
-        except:
-           pass
+        # except:
+        #    pass
     else:
         raise ValueError('Format Not Found')
     try:
