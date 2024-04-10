@@ -9,6 +9,7 @@ from .low_level import getFullCombination
 from IPython.display import display,HTML
 
 
+
 def importance_test(df1,y_col,weight_col=None,control_cols='not',const_cols='not'):
   df=df1.copy()
   if weight_col:
@@ -55,7 +56,7 @@ def importance_test(df1,y_col,weight_col=None,control_cols='not',const_cols='not
   df['lin_pred']=reg.predict(topred_np)
   baseError=np.mean((df['lin_pred'].to_numpy()-df[y_col].to_numpy())**2)
   ress=pd.DataFrame(dict(cols=control_cols, imp=np.array(allLosses)-baseError))
-  ress.sort_values('imp').plot('cols', 'imp', 'barh')
+  plot0=ress.sort_values('imp').plot('cols', 'imp', 'barh')
   
 
 
@@ -84,4 +85,5 @@ def importance_test(df1,y_col,weight_col=None,control_cols='not',const_cols='not
   np.mean((df['non_lin_pred'].to_numpy()-df[y_col].to_numpy())**2)
   ress=pd.DataFrame(dict(cols=x_cols, imp=rf.feature_importances_))
   # ress.loc[ress["imp"]>0].plot('cols', 'imp', 'barh')
-  ress.sort_values('imp').loc[ress["imp"]>0.001].plot('cols', 'imp', 'barh')
+  plot1=ress.sort_values('imp').loc[ress["imp"]>0.001].plot('cols', 'imp', 'barh')
+  return fig, plot0, plot1

@@ -77,7 +77,6 @@ def vif_distance(df,tounderstand,stochQ=1000):   #transform meta vif analisys to
   return similitude
 
 
-
 def collinearity_test(df1,tounderstand='not',distance="vif",match=False,threshold=0.7):   #full test of collinearity, corr-abs interesting
   df=df1.copy()
   if tounderstand=='not':
@@ -139,7 +138,8 @@ def collinearity_test(df1,tounderstand='not',distance="vif",match=False,threshol
 
   ########third
   try:
-    px.line(((df.groupby('Weeks').mean()-df.groupby('Weeks').mean().mean())/df.groupby('Weeks').mean().std()).reset_index(),x='Weeks',y=tounderstand).show()
+    fig=px.line(((df.groupby('Weeks').mean()-df.groupby('Weeks').mean().mean())/df.groupby('Weeks').mean().std()).reset_index(),x='Weeks',y=tounderstand)
+    fig.show()
   except Exception as e:
     print(e)
 
@@ -151,6 +151,10 @@ def collinearity_test(df1,tounderstand='not',distance="vif",match=False,threshol
   clus=[]
   for i in range(1,max(labels)+1):
     clus.append(list(np.array(to_test)[np.where(labels==i)[0]]))
-  return clus
+  
+  try:
+    return clus, fig, plt
+  except:
+    return clus, plt
 
 
