@@ -7,7 +7,7 @@ import plotly.express as px
 from IPython.display import display
 
 class Meta_Reg:
-    def __init__(self, df1,y_col,stochQ=10000,weight_col=None,control_cols=None,const_cols=None,solve_problems=False):
+    def __init__(self, df1,y_col,stochQ=10000,weight_col=None,control_cols=None,const_cols=None,solve_problems=False,streamlit=False):
         df = df1.copy()
         if weight_col:
             df=df.loc[df[weight_col]>0]
@@ -23,6 +23,12 @@ class Meta_Reg:
         allBetas=[]
         y_miniReg=df[y_col].to_numpy()
         allLosses=[]
+
+        if streamlit:
+            progress_text = "Operation in progress. Please wait."
+            my_bar = streamlit.progress(0, text=progress_text)
+            counter=0
+            percent_complete=0
 
         for i in tqdm(X_rand):
             # print(i)
@@ -40,7 +46,13 @@ class Meta_Reg:
             allLosses.append(np.mean((reg.predict(X_miniReg)-y_miniReg)**2))
 
             allBetas.append(betas)
+            if streamlit:
+                my_bar.progress(percent_complete, text=progress_text)
+                counter+=1
+                percent_complete=counter/len(X_rand)
             # print(betas)
+        if streamlit:
+            my_bar.empty()
         if solve_problems:
         #problems with reg
             px.histogram(np.log(allLosses)).show()
@@ -67,6 +79,7 @@ class Meta_Reg:
         self.x_cols=x_cols
         self.y_miniReg=y_miniReg
         self.medias=medias
+        self.streamlit=streamlit
 
         display(control_cols)
     
@@ -87,7 +100,9 @@ class Meta_Reg:
                 toHist.append({"value":allBetas[i][var],"control":"non_controled","error":allLosses[i],'contribution':allBetas[i][var]*medias[var]*100})
         tograph=pd.DataFrame(toHist)
 
-        px.histogram(tograph,x="value",color="control",nbins=1000).show()
+        fig0=px.histogram(tograph,x="value",color="control",nbins=1000)
+        if not self.streamlit:
+            fig0.show()
 
         metaY=np.array([allBetas[i][var] for i in getIndexOfCol(var,allBetas)])
         metaX=X_rand[getIndexOfCol(var,allBetas)]
@@ -104,11 +119,19 @@ class Meta_Reg:
 
         meta_betas={control_cols[i]:metaReg.coef_[i] for i in range(len(control_cols))}
         #px.scatter(x=[np.array(allLosses)[i] for i in getIndexOfCol(var)],y=metaY).show()
-        #px.scatter(tograph,x="error",y="value",color="control").show()
-        px.histogram(tograph,x="contribution",color="control",nbins=1000).show()
-        px.scatter(tograph,x="error",y="contribution",color="control").show()
-        meta_betas
+        fig3=px.scatter(tograph,x="error",y="value",color="control")
+        
+        fig1=px.histogram(tograph,x="contribution",color="control",nbins=1000)
+        
+        fig2=px.scatter(tograph,x="error",y="contribution",color="control")
+        
+        if not self.streamlit:
+            fig3.show()
+            fig1.show()
+            fig2.show()
+        # meta_betas
         #print(meta_betas[var])
         #{k: v for k, v in sorted(meta_betas.items(), key=lambda item: item[1])}
         display({k: v*medias[var]*100 for k, v in sorted(meta_betas.items(), key=lambda item: item[1])})
         #getT(metaReg,df_x,metaX,metaY)
+        return fig0, fig3, fig1, fig2, {k: v*medias[var]*100 for k, v in sorted(meta_betas.items(), key=lambda item: item[1])}
