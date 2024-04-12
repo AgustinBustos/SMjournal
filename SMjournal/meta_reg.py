@@ -138,4 +138,4 @@ class Meta_Reg:
         #{k: v for k, v in sorted(meta_betas.items(), key=lambda item: item[1])}
         display({k: v*medias[var]*100 for k, v in sorted(meta_betas.items(), key=lambda item: item[1])})
         #getT(metaReg,df_x,metaX,metaY)
-        return fig0, fig1, fig2, fig3, {k: v*medias[var]*100 for k, v in sorted(meta_betas.items(), key=lambda item: item[1])}
+        return fig0, fig1, fig2, fig3, {k: v*medias[var]*100 for k, v in sorted(meta_betas.items(), key=lambda item: item[1])}, {k: v for k, v in sorted(meta_betas.items(), key=lambda item: item[1])}
