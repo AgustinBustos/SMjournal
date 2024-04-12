@@ -75,12 +75,12 @@ def vif_distance(df,tounderstand,stochQ=1000,streamlit=False):   #transform meta
   simil=np.minimum(filtered_duff.to_numpy(),filtered_duff.to_numpy().T)
 
   simil[simil < 0] = 0
-  disimil=1/simil
+  disimil=1/(simil+0.000000000000001)
   disimil[disimil > 200] = 200
   disimil=np.log(disimil+1)
   n = disimil.shape[0]
   disimil[range(n), range(n)] = 0
-  disimil=disimil/np.max(disimil)
+  disimil=disimil/(np.max(disimil)+0.000000000000001)
 
   simil=1-disimil
   similitude=pd.DataFrame(simil)

@@ -10,7 +10,7 @@ from IPython.display import display,HTML
 
 
 
-def importance_test(df1,y_col,weight_col=None,control_cols='not',const_cols='not'):
+def importance_test(df1,y_col,weight_col=None,control_cols='not',const_cols='not',streamlit=False):
   df=df1.copy()
   if weight_col:
     df=df.loc[df[weight_col]>0]
@@ -57,6 +57,7 @@ def importance_test(df1,y_col,weight_col=None,control_cols='not',const_cols='not
   baseError=np.mean((df['lin_pred'].to_numpy()-df[y_col].to_numpy())**2)
   ress=pd.DataFrame(dict(cols=control_cols, imp=np.array(allLosses)-baseError))
   plot0=ress.sort_values('imp').plot('cols', 'imp', 'barh')
+  toploten0=ress.sort_values('imp').copy()
   
 
 
@@ -79,11 +80,13 @@ def importance_test(df1,y_col,weight_col=None,control_cols='not',const_cols='not
   fulltotal=df.groupby(['Weeks']).mean()
   fulltotal=fulltotal.reset_index()
   fig=px.line(fulltotal,x='Weeks',y=[y_col,'non_lin_pred','lin_pred'])
-  fig.show()
+  if not streamlit:
+    fig.show()
   #guardar_fig(fig,"bg overfitteado con vars de covid")
   display(HTML('<h1>First Linear, Second Non-Linear<h1>'))
   np.mean((df['non_lin_pred'].to_numpy()-df[y_col].to_numpy())**2)
   ress=pd.DataFrame(dict(cols=x_cols, imp=rf.feature_importances_))
   # ress.loc[ress["imp"]>0].plot('cols', 'imp', 'barh')
   plot1=ress.sort_values('imp').loc[ress["imp"]>0.001].plot('cols', 'imp', 'barh')
-  return fig, plot0, plot1
+  toploten1=ress.sort_values('imp').copy()
+  return fig, plot0, plot1, toploten0, toploten1
