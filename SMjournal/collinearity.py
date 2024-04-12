@@ -18,17 +18,29 @@ from .low_level import getFullCombination, getVIFs, getIndexOfCol3
 #second page
 
 
-def vif_distance(df,tounderstand,stochQ=1000):   #transform meta vif analisys to block modeling
+def vif_distance(df,tounderstand,stochQ=1000,streamlit=False):   #transform meta vif analisys to block modeling
   #'searchcont
   X_rand=np.random.randint(2, size=[stochQ,len(tounderstand)])
   X_rand=X_rand[np.where(X_rand.sum(axis=1)>=2)]
   allVIFs=[]
+  
+  if streamlit:
+    progress_text = "Operation in progress. Please wait."
+    my_bar = streamlit.progress(0, text=progress_text)
+    counter=0
+    percent_complete=0
 
   for i in tqdm(X_rand):
     # print(i)
     randomX_cols=getFullCombination(i,tounderstand)
     allVIFs.append(getVIFs(randomX_cols,df))
-
+    if streamlit:
+      my_bar.progress(percent_complete, text=progress_text)
+      counter+=1
+      percent_complete=counter/len(X_rand)
+  
+  if streamlit:
+    my_bar.empty()
   for i in allVIFs:
     for j in i.keys():
       if i[j]>3000:
@@ -77,7 +89,7 @@ def vif_distance(df,tounderstand,stochQ=1000):   #transform meta vif analisys to
   return similitude
 
 
-def collinearity_test(df1,tounderstand='not',distance="vif",match=False,threshold=0.7):   #full test of collinearity, corr-abs interesting
+def collinearity_test(df1,tounderstand='not',distance="vif",match=False,threshold=0.7,streamlit=False,filter=0):   #full test of collinearity, corr-abs interesting
   df=df1.copy()
   if tounderstand=='not':
     const_cols=[i for i in df.columns if ('.hol' in i.lower()) or ('.mkt' in i.lower())]
@@ -88,7 +100,7 @@ def collinearity_test(df1,tounderstand='not',distance="vif",match=False,threshol
 
   # set figure size
   correlation=df[to_test].corr().fillna(0)
-  filter=0
+  
   corr_numpy=correlation.to_numpy()
   indices=corr_numpy.argsort()[:,-2]
   corr_numpy
@@ -100,15 +112,15 @@ def collinearity_test(df1,tounderstand='not',distance="vif",match=False,threshol
   finalIndices
   finalCorr=correlation.iloc[finalIndices,finalIndices]
 
-  plt.figure(figsize=(10,7))
+  corrplot.figure(figsize=(10,7))
 
   # Generate a mask to onlyshow the bottom triangle
   mask = np.triu(np.ones_like(finalCorr, dtype=bool))
 
   # generate heatmap
-  sns.heatmap(finalCorr, annot=True, mask=mask, vmin=-1, vmax=1,cmap="rocket_r")
-  plt.title('Correlation Coefficient Of Predictors')
-  plt.show()
+  corrplot=sns.heatmap(finalCorr, annot=True, mask=mask, vmin=-1, vmax=1,cmap="rocket_r")
+  corrplot.title('Correlation Coefficient Of Predictors')
+  corrplot.show()
 
 
   
@@ -124,7 +136,7 @@ def collinearity_test(df1,tounderstand='not',distance="vif",match=False,threshol
       similarity=abs(correlations)
     
   elif distance=="vif":
-    similarity=vif_distance(df,tounderstand,stochQ=1000)
+    similarity=vif_distance(df,tounderstand,stochQ=1000,streamlit=streamlit)
   
 
   plt.figure(figsize=(12,8))
@@ -139,7 +151,8 @@ def collinearity_test(df1,tounderstand='not',distance="vif",match=False,threshol
   ########third
   try:
     fig=px.line(((df.groupby('Weeks').mean()-df.groupby('Weeks').mean().mean())/df.groupby('Weeks').mean().std()).reset_index(),x='Weeks',y=tounderstand)
-    fig.show()
+    if not streamlit:
+      fig.show()
   except Exception as e:
     print(e)
 
@@ -153,8 +166,8 @@ def collinearity_test(df1,tounderstand='not',distance="vif",match=False,threshol
     clus.append(list(np.array(to_test)[np.where(labels==i)[0]]))
   
   try:
-    return clus, fig, plt
+    return clus, fig, plt, corrplot
   except:
-    return clus, plt
+    return clus, plt, corrplot
 
 
