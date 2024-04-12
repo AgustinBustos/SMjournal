@@ -65,6 +65,9 @@ class Meta_Reg:
 
 
         df['periods']=df['Weeks'].dt.year
+        # print('--------------------------here---------------')
+        # print(df['periods'].unique())
+
         selectedPeriod=max(df['periods'].unique())
         supp_df=df.groupby(['periods']).mean()
         medias=supp_df.loc[selectedPeriod].to_dict()
@@ -90,17 +93,17 @@ class Meta_Reg:
         medias=self.medias
         control_cols=self.control_cols
         control_var=control_var+[var]
-        print(var)
+        # print(var)
         toHist=[]
         fast=set.intersection(*map(set,[getIndexOfCol(i,allBetas) for i in control_var]))
         for i in getIndexOfCol(var,allBetas):
             if i in fast:
-                toHist.append({"value":allBetas[i][var],"control":"controled","error":allLosses[i],'contribution':allBetas[i][var]*medias[var]*100})
+                toHist.append({"betas":allBetas[i][var],"control":"controled","error":allLosses[i],'contribution':allBetas[i][var]*medias[var]*100})
             else:
-                toHist.append({"value":allBetas[i][var],"control":"non_controled","error":allLosses[i],'contribution':allBetas[i][var]*medias[var]*100})
+                toHist.append({"betas":allBetas[i][var],"control":"non_controled","error":allLosses[i],'contribution':allBetas[i][var]*medias[var]*100})
         tograph=pd.DataFrame(toHist)
 
-        fig0=px.histogram(tograph,x="value",color="control",nbins=1000)
+        fig0=px.histogram(tograph,x="betas",color="control",nbins=1000)
         if not self.streamlit:
             fig0.show()
 
@@ -119,19 +122,20 @@ class Meta_Reg:
 
         meta_betas={control_cols[i]:metaReg.coef_[i] for i in range(len(control_cols))}
         #px.scatter(x=[np.array(allLosses)[i] for i in getIndexOfCol(var)],y=metaY).show()
-        fig3=px.scatter(tograph,x="error",y="value",color="control")
+        fig1=px.scatter(tograph,x="error",y="betas",color="control")
         
-        fig1=px.histogram(tograph,x="contribution",color="control",nbins=1000)
+        fig2=px.histogram(tograph,x="contribution",color="control",nbins=1000)
         
-        fig2=px.scatter(tograph,x="error",y="contribution",color="control")
+        fig3=px.scatter(tograph,x="error",y="contribution",color="control")
         
         if not self.streamlit:
-            fig3.show()
+            
             fig1.show()
             fig2.show()
+            fig3.show()
         # meta_betas
         #print(meta_betas[var])
         #{k: v for k, v in sorted(meta_betas.items(), key=lambda item: item[1])}
         display({k: v*medias[var]*100 for k, v in sorted(meta_betas.items(), key=lambda item: item[1])})
         #getT(metaReg,df_x,metaX,metaY)
-        return fig0, fig3, fig1, fig2, {k: v*medias[var]*100 for k, v in sorted(meta_betas.items(), key=lambda item: item[1])}
+        return fig0, fig1, fig2, fig3, {k: v*medias[var]*100 for k, v in sorted(meta_betas.items(), key=lambda item: item[1])}
