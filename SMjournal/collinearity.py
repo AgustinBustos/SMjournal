@@ -12,7 +12,8 @@ from IPython.display import display
 
 from .low_level import getFullCombination, getVIFs, getIndexOfCol3
 
-
+plt.rcParams['axes.facecolor'] = '#fafafa'
+plt.rcParams['figure.facecolor'] = '#fafafa'
 
 #############################################################################################################################################################
 #second page
@@ -119,6 +120,7 @@ def collinearity_test(df1,tounderstand='not',distance="vif",match=False,threshol
 
   # generate heatmap
   corrplot=sns.heatmap(finalCorr, annot=True, mask=mask, vmin=-1, vmax=1,cmap="rocket_r")
+  # .set(title='Correlation Coefficient Of Predictors',rc={'axes.facecolor':'#fafafa', 'figure.facecolor':'#fafafa'})
   corrplot=corrplot.get_figure()
   # corrplot.title('Correlation Coefficient Of Predictors')
   # .set(title='Correlation Coefficient Of Predictors')
