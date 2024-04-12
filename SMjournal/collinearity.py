@@ -112,14 +112,16 @@ def collinearity_test(df1,tounderstand='not',distance="vif",match=False,threshol
   finalIndices
   finalCorr=correlation.iloc[finalIndices,finalIndices]
 
-  corrplot.figure(figsize=(10,7))
+  plt.figure(figsize=(10,7))
 
   # Generate a mask to onlyshow the bottom triangle
   mask = np.triu(np.ones_like(finalCorr, dtype=bool))
 
   # generate heatmap
   corrplot=sns.heatmap(finalCorr, annot=True, mask=mask, vmin=-1, vmax=1,cmap="rocket_r")
-  corrplot.title('Correlation Coefficient Of Predictors')
+  corrplot=corrplot.get_figure()
+  # corrplot.title('Correlation Coefficient Of Predictors')
+  # .set(title='Correlation Coefficient Of Predictors')
   corrplot.show()
 
 
