@@ -20,6 +20,8 @@ class Meta_Reg:
         #pre meta reg
         x_cols=control_cols+const_cols
         X_rand=np.random.randint(2, size=[stochQ,len(control_cols)])
+        X_rand=X_rand[~np.all(X_rand==0 , axis=1)]
+        stochQ=len(X_rand)
         allBetas=[]
         y_miniReg=df[y_col].to_numpy()
         allLosses=[]
