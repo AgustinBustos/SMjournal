@@ -90,7 +90,7 @@ def vif_distance(df,tounderstand,stochQ=1000,streamlit=False):   #transform meta
   return similitude
 
 
-def collinearity_test(df1,tounderstand='not',distance="vif",match=False,threshold=0.7,streamlit=False,filter=0):   #full test of collinearity, corr-abs interesting
+def collinearity_test(df1,tounderstand='not',distance="vif",match=False,threshold=0.7,streamlit=False,filter=0, y_col=False):   #full test of collinearity, corr-abs interesting
   df=df1.copy()
   if tounderstand=='not':
     const_cols=[i for i in df.columns if ('.hol' in i.lower()) or ('.mkt' in i.lower())]
@@ -141,6 +141,9 @@ def collinearity_test(df1,tounderstand='not',distance="vif",match=False,threshol
     
   elif distance=="vif":
     similarity=vif_distance(df,tounderstand,stochQ=1000,streamlit=streamlit)
+  # elif distance=='regression':
+  #   df[tounderstand],df[y_col]
+
   
 
   plt.figure(figsize=(12,8))
