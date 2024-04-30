@@ -87,6 +87,6 @@ def importance_test(df1,y_col,weight_col=None,control_cols='not',const_cols='not
   np.mean((df['non_lin_pred'].to_numpy()-df[y_col].to_numpy())**2)
   ress=pd.DataFrame(dict(cols=x_cols, imp=rf.feature_importances_))
   # ress.loc[ress["imp"]>0].plot('cols', 'imp', 'barh')
-  plot1=ress.sort_values('imp').loc[ress["imp"]>0.001].plot('cols', 'imp', 'barh')
+  plot1=ress.sort_values('imp').loc[ress["cols"].isin(control_cols)].plot('cols', 'imp', 'barh')   #.loc[ress["imp"]>0.001]
   toploten1=ress.sort_values('imp').copy()
   return fig, plot0, plot1, toploten0, toploten1
